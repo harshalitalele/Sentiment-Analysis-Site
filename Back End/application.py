@@ -7,7 +7,7 @@ import json
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
-solr_url = 'http://52.14.177.166:8983/solr/gettingstarted/select?q=text%3A{}&rows=20&fl=id,text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date'
+solr_url = 'http://52.14.177.166:8983/solr/gettingstarted/select?q=text%3A{}&rows=20&fl=id,text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
 
 @application.route("/")
 def home():
