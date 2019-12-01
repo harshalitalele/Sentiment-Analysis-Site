@@ -4,16 +4,16 @@ import urllib.request
 import urllib.parse
 import json
 
-app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+application = Flask(__name__)
+cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
-solr_url = 'http://3.134.81.216:8983/solr/gettingstarted/select?q=text%3A{}&rows=20&fl=id,text,poi_name'
+solr_url = 'http://52.14.177.166:8983/solr/gettingstarted/select?q=text%3A{}&rows=20&fl=id,text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date'
 
-@app.route("/")
+@application.route("/")
 def home():
     return render_template("index.html")
 
-@app.route('/query', methods = ['GET'])
+@application.route('/query', methods = ['GET'])
 def query():
     query = request.args.get('q')
     query = urllib.parse.quote(query)
@@ -29,4 +29,4 @@ def query():
     return docstest
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    application.run(host='0.0.0.0')
