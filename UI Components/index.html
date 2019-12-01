@@ -2,13 +2,34 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Flask Tutorial</title>
+    <title>Twitter - Sentiment Analysis</title>
+    <link rel="stylesheet" href="libraries/bootstrap-4.3.1-dist/css/bootstrap.min.css" crossorigin="anonymous">
   </head>
   <body>
-    <h1> My First Try Using Flask </h1>
-    <p> Flask is Fun </p>
-	Search: <input type="text"/>
-	<br/>
-	<button>Go!</button>
+    <h1> Sentiment analysis on Twitter data </h1>
+    <div ng-app='search' class="col-md-12">
+		<div class="row" ng-controller='mainCtrl'>
+			<div class="col-md-3">
+				<div ng-include="'templates/sidebar.html'"></div>
+			</div>
+			<div class="col-md-6">
+				<form>
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Enter Search query here">
+					</div>
+				  	<button type="submit" class="btn btn-primary">Go!</button>
+				</form>
+			</div>
+			<div class="col-md-3">
+				Third Position
+			</div>
+		</div> 
+    </div>
+	<div>
+        <script src="libraries/angular.min.js"></script>
+        <script src="libraries/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+        <script src="app.js"></script>
+        <script src="controllers/main-controller.js"></script>
+    </div>
   </body>
 </html>
