@@ -23,12 +23,14 @@
 					<div class="media" ng-repeat="tweet in tweets">
 						<img ng-src="{{tweet['user.profile_image_url']}}" class="align-self-start mr-3" alt="..." height="50" width="50"/>
 						<div class="media-body">
-							<a ng-href="{{tweet.tweet_urls}}" target="_blank">
+							<a ng-href="{{tweet['user.entities.url.urls.expanded_url']}}" target="_blank">
 								<h5 class="mt-0">
 									{{tweet.poi_name}}
 								</h5>
-								{{tweet.text}}
 							</a>
+							<a ng-href="{{tweet.tweet_urls}}" target="_blank">
+								{{tweet.text}}
+							</a>							
 						</div>
 					</div>
 				</div>
