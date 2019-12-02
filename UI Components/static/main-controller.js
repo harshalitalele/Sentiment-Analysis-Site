@@ -34,8 +34,22 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 			query: $scope.queryterm
 		}).then(function(res) {
 			alert(JSON.stringify(res.data));
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.setOnLoadCallback(drawChart);
+			function drawChart() {
+				var data = google.visualization.arrayToDataTable([
+					['Sentiment', 'Percentage'],
+					['Positive', res.data.pos],
+					['Negative', res.data.neg],
+					['Neutral', res.data.neut]
+				]);
+				var options = {'title':'Sentiment Analysis', 'width':550, 'height':400};
+				var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+				chart.draw(data, options);
+			}
 		}, function(err) {
 			$scope.message = "this is error";
 		});
 	};
+	
 }]);
