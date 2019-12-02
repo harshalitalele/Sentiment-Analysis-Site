@@ -37,7 +37,7 @@ def query():
     return docstest
 
 def getTweetIds(query):
-    idurl = 'http://18.223.117.41:8983/solr/IRProject4/select?q={}&rows=50&fl=id&fq=-in_reply_to_status_id:{}'
+    idurl = 'http://18.223.117.41:8983/solr/IRProject4/select?q={}&rows=100&fl=id,tweet_text&fq=-in_reply_to_status_id:{}'
     query = 'tweet_text:' + urllib.parse.quote(query)
     facetq = urllib.parse.quote('[* TO *]')
     url = idurl.format(query, facetq)
@@ -67,28 +67,28 @@ def getSentimentReport(data):
 @application.route('/replies', methods = ['POST'])
 def getReplies():
     q = request.get_json().get('query')
-    ids = getTweetIds(q)
-    print(len(ids))
-    query = ''
-    count = 0
-    for id in ids:
-        if count > 0:
-            query += ' OR '
-        else:
-            count += 1
-        query += 'in_reply_to_status_id: ' + id['id']
-        
-    query = urllib.parse.quote(query)
-    url = replies_url.format(query)
-    
-    try:
-        datatest = urllib.request.urlopen(url)
-        docstest = json.load(datatest)['response']['docs']
-    except:
-        print("An exception occurred for the Query")
-        docstest = '[]'
-    print(len(docstest))
-    report = getSentimentReport(docstest)
+    tweets = getTweetIds(q)
+    #print(data)
+##    query = ''
+##    count = 0
+##    for id in ids:
+##        if count > 0:
+##            query += ' OR '
+##        else:
+##            count += 1
+##        query += 'in_reply_to_status_id: ' + id['id']
+##        
+##    query = urllib.parse.quote(query)
+##    url = replies_url.format(query)
+##    
+##    try:
+##        datatest = urllib.request.urlopen(url)
+##        docstest = json.load(datatest)['response']['docs']
+##    except:
+##        print("An exception occurred for the Query")
+##        docstest = '[]'
+##    print(len(docstest))
+    report = getSentimentReport(tweets)
     report = json.dumps(report)
     return report
 
