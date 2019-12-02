@@ -18,7 +18,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
     };
 	
 	$scope.searchQuery = function() {
-		$http.get('http://192.168.137.1:5000/query?q='+$scope.queryterm).then(function(res) {
+		$http.get('http://192.168.1.55:5000/query?q='+$scope.queryterm).then(function(res) {
 			$scope.tweets = res.data;
 		}, function(err) {
 			$scope.message = "this is error";
@@ -30,10 +30,10 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 		for(var t in $scope.tweets) {
 			ids.push($scope.tweets[t].id);
 		}
-		$http.post('http://192.168.137.1:5000/replies', {
+		$http.post('http://192.168.1.55:5000/replies', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			alert(res.data);
+			alert(JSON.stringify(res.data));
 		}, function(err) {
 			$scope.message = "this is error";
 		});
