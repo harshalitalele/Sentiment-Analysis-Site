@@ -18,6 +18,7 @@
 						<input type="text" class="form-control" placeholder="Enter Search query here" ng-model="queryterm">
 					</div>
 				  	<button type="submit" class="btn btn-primary" ng-click="searchQuery()">Go!</button>
+					<button type="submit" class="btn btn-primary" ng-click="analyzeTweets()">Analyze</button>
 				</form>
 				<div>
 					<div class="media" ng-repeat="tweet in tweets">
