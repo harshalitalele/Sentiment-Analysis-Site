@@ -3,13 +3,16 @@ from flask_cors import CORS
 import urllib.request
 import urllib.parse
 import json
+from textblob import TextBlob
+from langdetect import detect
+from translate import Translator
 
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 solr_ip = 'http://18.223.117.41:8983/solr/IRProject4/'
-tweets_url = solr_ip + 'select?q={}&rows=20&fq=-in_reply_to_status_id:{}&fl=id,text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
-replies_url = solr_ip + 'select?q={}&rows=20&fl=id,text,poi_name,created_at,lang,poi_name,country'
+tweets_url = solr_ip + 'select?q={}&rows=20&fq=-in_reply_to_status_id:{}&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
+replies_url = solr_ip + 'select?q={}&rows=50&fl=id,tweet_text'
 
 @application.route("/")
 def home():
@@ -17,10 +20,13 @@ def home():
 
 @application.route('/query', methods = ['GET'])
 def query():
-    query = 'text:' + request.args.get('q')
+    print(request.args.get('q'))
+    query = 'tweet_text:' + request.args.get('q')
     query = urllib.parse.quote(query)
+    print(query)
     facetq = urllib.parse.quote('[* TO *]')
     url = tweets_url.format(query, facetq)
+    print(url)
     try:
         datatest = urllib.request.urlopen(url)
         docstest = json.load(datatest)['response']['docs']
@@ -31,8 +37,8 @@ def query():
     return docstest
 
 def getTweetIds(query):
-    idurl = 'http://18.223.117.41:8983/solr/IRProject4/select?q={}&rows=100&fl=id&fq=-in_reply_to_status_id:{}'
-    query = 'text:' + urllib.parse.quote(query)
+    idurl = 'http://18.223.117.41:8983/solr/IRProject4/select?q={}&rows=50&fl=id&fq=-in_reply_to_status_id:{}'
+    query = 'tweet_text:' + urllib.parse.quote(query)
     facetq = urllib.parse.quote('[* TO *]')
     url = idurl.format(query, facetq)
     
@@ -43,6 +49,20 @@ def getTweetIds(query):
         print("An exception occurred for Query: " + query)
         docstest = '[]'
     return docstest
+
+def getSentimentReport(data):
+    report = {'pos': 0, 'neg': 0, 'neut': 0}
+    for jsonobj in data:
+        tid=jsonobj['id']
+        tweet_data=jsonobj['tweet_text'][0]
+        analysis=TextBlob(tweet_data)
+        if analysis.sentiment[0]>0:
+           report['pos']+=1
+        elif analysis.sentiment[0]<0:
+            report['neg']+=1
+        else:
+            report['neut']+=1
+    return report
 
 @application.route('/replies', methods = ['POST'])
 def getReplies():
@@ -57,7 +77,7 @@ def getReplies():
         else:
             count += 1
         query += 'in_reply_to_status_id: ' + id['id']
-    print(query)
+        
     query = urllib.parse.quote(query)
     url = replies_url.format(query)
     
@@ -67,8 +87,10 @@ def getReplies():
     except:
         print("An exception occurred for the Query")
         docstest = '[]'
-    docstest = json.dumps(docstest)
-    return docstest
+    print(len(docstest))
+    report = getSentimentReport(docstest)
+    report = json.dumps(report)
+    return report
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
