@@ -11,7 +11,7 @@ application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 solr_ip = 'http://18.223.117.41:8983/solr/IRProject4/'
-tweets_url = solr_ip + 'select?q={}&rows=20&fq=-in_reply_to_status_id:{}&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
+tweets_url = solr_ip + 'select?q={}&rows=20&fq=-in_reply_to_status_id:{}&fq=poi_name:narendramodi&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
 replies_url = solr_ip + 'select?q={}&rows=50&fl=id,tweet_text'
 
 @application.route("/")
@@ -64,31 +64,38 @@ def getSentimentReport(data):
             report['neut']+=1
     return report
 
-@application.route('/replies', methods = ['POST'])
-def getReplies():
+@application.route('/tweetanalysis', methods = ['POST'])
+def analyzeReplies():
     q = request.get_json().get('query')
     tweets = getTweetIds(q)
-    #print(data)
-##    query = ''
-##    count = 0
-##    for id in ids:
-##        if count > 0:
-##            query += ' OR '
-##        else:
-##            count += 1
-##        query += 'in_reply_to_status_id: ' + id['id']
-##        
-##    query = urllib.parse.quote(query)
-##    url = replies_url.format(query)
-##    
-##    try:
-##        datatest = urllib.request.urlopen(url)
-##        docstest = json.load(datatest)['response']['docs']
-##    except:
-##        print("An exception occurred for the Query")
-##        docstest = '[]'
-##    print(len(docstest))
     report = getSentimentReport(tweets)
+    report = json.dumps(report)
+    return report
+
+@application.route('/repliesanalysis', methods = ['POST'])
+def analyzeRepliesReq():
+    q = request.get_json().get('query')
+    tweets = getTweetIds(q)
+    query = ''
+    count = 0
+    for id in tweets:
+        if count > 0:
+            query += ' OR '
+        else:
+            count += 1
+        query += 'in_reply_to_status_id: ' + id['id']
+        
+    query = urllib.parse.quote(query)
+    url = replies_url.format(query)
+    
+    try:
+        datatest = urllib.request.urlopen(url)
+        docstest = json.load(datatest)['response']['docs']
+    except:
+        print("An exception occurred for the Query")
+        docstest = '[]'
+    print(len(docstest))
+    report = getSentimentReport(docstest)
     report = json.dumps(report)
     return report
 
