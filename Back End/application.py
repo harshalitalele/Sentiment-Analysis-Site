@@ -11,8 +11,8 @@ application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 solr_ip = 'http://18.223.117.41:8983/solr/IRProject4/'
-tweets_url = solr_ip + 'select?q={}&rows=20&fq=-in_reply_to_status_id:{}&fq=poi_name:narendramodi&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
-replies_url = solr_ip + 'select?q={}&rows=50&fl=id,tweet_text'
+tweets_url = solr_ip + 'select?q={}&rows=10&fq=-in_reply_to_status_id:{}&fq=poi_name:narendramodi&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
+replies_url = solr_ip + 'select?q={}&rows=100&fl=id,tweet_text'
 
 @application.route("/")
 def home():
@@ -64,18 +64,13 @@ def getSentimentReport(data):
             report['neut']+=1
     return report
 
-@application.route('/tweetanalysis', methods = ['POST'])
-def analyzeReplies():
+@application.route('/queryanalysis', methods = ['POST'])
+def analyzeQueryReq():
     q = request.get_json().get('query')
+    overall_report = {'tweet': {}, 'replies': {}}
     tweets = getTweetIds(q)
-    report = getSentimentReport(tweets)
-    report = json.dumps(report)
-    return report
-
-@application.route('/repliesanalysis', methods = ['POST'])
-def analyzeRepliesReq():
-    q = request.get_json().get('query')
-    tweets = getTweetIds(q)
+    tw_report = getSentimentReport(tweets)
+    overall_report['tweet'] = tw_report
     query = ''
     count = 0
     for id in tweets:
@@ -94,9 +89,9 @@ def analyzeRepliesReq():
     except:
         print("An exception occurred for the Query")
         docstest = '[]'
-    print(len(docstest))
-    report = getSentimentReport(docstest)
-    report = json.dumps(report)
+    re_report = getSentimentReport(docstest)
+    overall_report['replies'] = re_report
+    report = json.dumps(overall_report)
     return report
 
 if __name__ == '__main__':
