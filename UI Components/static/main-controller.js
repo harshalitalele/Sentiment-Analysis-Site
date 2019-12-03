@@ -13,8 +13,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
         url: $scope.tweet_urls,
         lang_e: $scope.lang_e,
         lang_p: $scope.lang_p,
-        lang_h: $scope.lang_h              
-
+        lang_h: $scope.lang_h
     };
 	
 	$scope.searchQuery = function() {
@@ -30,10 +29,9 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 		for(var t in $scope.tweets) {
 			ids.push($scope.tweets[t].id);
 		}
-		$http.post('/replies', {
+		$http.post('/tweetanalysis', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			//alert(JSON.stringify(res.data));
 			google.charts.load('current', {'packages':['corechart']});
 			google.charts.setOnLoadCallback(drawChart);
 			function drawChart() {
@@ -43,8 +41,28 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 					['Negative', res.data.neg],
 					['Neutral', res.data.neut]
 				]);
-				var options = {'title':'Sentiment Analysis', 'width':550, 'height':400};
-				var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+				var options = {'title':'Sentiment Analysis on Search Query topic over Tweets', 'width':550, 'height':400};
+				var chart = new google.visualization.PieChart(document.getElementById('tweet-analysis'));
+				chart.draw(data, options);
+			}
+		}, function(err) {
+			$scope.message = "this is error";
+		});
+		
+		$http.post('/repliesanalysis', {
+			query: $scope.queryterm
+		}).then(function(res) {
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.setOnLoadCallback(drawChart);
+			function drawChart() {
+				var data = google.visualization.arrayToDataTable([
+					['Sentiment', 'Percentage'],
+					['Positive', res.data.pos],
+					['Negative', res.data.neg],
+					['Neutral', res.data.neut]
+				]);
+				var options = {'title':'Sentiment Analysis on overall replies to the topic', 'width':550, 'height':400};
+				var chart = new google.visualization.PieChart(document.getElementById('replies-analysis'));
 				chart.draw(data, options);
 			}
 		}, function(err) {
