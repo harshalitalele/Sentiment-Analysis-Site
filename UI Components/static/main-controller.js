@@ -33,7 +33,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 		$http.post('/replies', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			alert(JSON.stringify(res.data));
+			//alert(JSON.stringify(res.data));
 			google.charts.load('current', {'packages':['corechart']});
 			google.charts.setOnLoadCallback(drawChart);
 			function drawChart() {
