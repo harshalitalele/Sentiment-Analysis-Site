@@ -2,6 +2,8 @@ var app = angular.module('search');
 
 app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.message = "Hello there!";
+	var tweetReport = {},
+		repliesReport = {};
     
     var obj = {
         poi_name: $scope.poi_name,
@@ -17,7 +19,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
     };
 	
 	$scope.searchQuery = function() {
-		$http.get('/query?q='+$scope.queryterm).then(function(res) {
+		$http.get('http://192.168.1.55:5000/query?q='+$scope.queryterm).then(function(res) {
 			$scope.tweets = res.data;
 		}, function(err) {
 			$scope.message = "this is error";
@@ -25,49 +27,54 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 	};
 	
 	$scope.analyzeTweets = function() {
-		var ids = [];
-		for(var t in $scope.tweets) {
-			ids.push($scope.tweets[t].id);
-		}
-		$http.post('/tweetanalysis', {
+		$scope.openModal();
+		$http.post('http://192.168.1.55:5000/tweetanalysis', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			google.charts.load('current', {'packages':['corechart']});
-			google.charts.setOnLoadCallback(drawChart);
-			function drawChart() {
-				var data = google.visualization.arrayToDataTable([
-					['Sentiment', 'Percentage'],
-					['Positive', res.data.pos],
-					['Negative', res.data.neg],
-					['Neutral', res.data.neut]
-				]);
-				var options = {'title':'Sentiment Analysis on Search Query topic over Tweets', 'width':550, 'height':400};
-				var chart = new google.visualization.PieChart(document.getElementById('tweet-analysis'));
-				chart.draw(data, options);
-			}
+			tweetReport = res.data;			
 		}, function(err) {
 			$scope.message = "this is error";
 		});
 		
-		$http.post('/repliesanalysis', {
+		$http.post('http://192.168.1.55:5000/repliesanalysis', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			google.charts.load('current', {'packages':['corechart']});
-			google.charts.setOnLoadCallback(drawChart);
-			function drawChart() {
-				var data = google.visualization.arrayToDataTable([
-					['Sentiment', 'Percentage'],
-					['Positive', res.data.pos],
-					['Negative', res.data.neg],
-					['Neutral', res.data.neut]
-				]);
-				var options = {'title':'Sentiment Analysis on overall replies to the topic', 'width':550, 'height':400};
-				var chart = new google.visualization.PieChart(document.getElementById('replies-analysis'));
-				chart.draw(data, options);
-			}
+			repliesReport = res.data;
 		}, function(err) {
 			$scope.message = "this is error";
 		});
 	};
+	
+	$scope.openModal = function() {
+		$('#exampleModalLong').modal('show');
+	};
+	
+	$('#exampleModalLong').on('shown.bs.modal', function () {
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.setOnLoadCallback(drawTweetChart);
+			function drawTweetChart() {
+				var data = google.visualization.arrayToDataTable([
+					['Sentiment', 'Percentage'],
+					['Positive', tweetReport.pos],
+					['Negative', tweetReport.neg],
+					['Neutral', tweetReport.neut]
+				]);
+				var options = {'title':'Sentiment Analysis on Search Query topic over Tweets', 'width':400, 'height':400};
+				var chart = new google.visualization.PieChart(document.getElementById('tweet-analysis'));
+				chart.draw(data, options);
+			}
+			google.charts.setOnLoadCallback(drawRepliesChart);
+			function drawRepliesChart() {
+				var data = google.visualization.arrayToDataTable([
+					['Sentiment', 'Percentage'],
+					['Positive', repliesReport.pos],
+					['Negative', repliesReport.neg],
+					['Neutral', repliesReport.neut]
+				]);
+				var options = {'title':'Sentiment Analysis on overall replies to the topic', 'width':400, 'height':400};
+				var chart = new google.visualization.PieChart(document.getElementById('replies-analysis'));
+				chart.draw(data, options);
+			}
+		});
 	
 }]);
