@@ -19,7 +19,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
     };
 	
 	$scope.searchQuery = function() {
-		$http.get('http://192.168.1.55:5000/query?q='+$scope.queryterm).then(function(res) {
+		$http.get('/query?q='+$scope.queryterm).then(function(res) {
 			$scope.tweets = res.data;
 		}, function(err) {
 			$scope.message = "this is error";
@@ -28,18 +28,10 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 	
 	$scope.analyzeTweets = function() {
 		$scope.openModal();
-		$http.post('http://192.168.1.55:5000/tweetanalysis', {
+		$http.post('/queryanalysis', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			tweetReport = res.data;			
-		}, function(err) {
-			$scope.message = "this is error";
-		});
-		
-		$http.post('http://192.168.1.55:5000/repliesanalysis', {
-			query: $scope.queryterm
-		}).then(function(res) {
-			repliesReport = res.data;
+			queryAnalysisReport = res.data;			
 		}, function(err) {
 			$scope.message = "this is error";
 		});
@@ -55,9 +47,9 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 			function drawTweetChart() {
 				var data = google.visualization.arrayToDataTable([
 					['Sentiment', 'Percentage'],
-					['Positive', tweetReport.pos],
-					['Negative', tweetReport.neg],
-					['Neutral', tweetReport.neut]
+					['Positive', queryAnalysisReport.tweet.pos],
+					['Negative', queryAnalysisReport.tweet.neg],
+					['Neutral', queryAnalysisReport.tweet.neut]
 				]);
 				var options = {'title':'Sentiment Analysis on Search Query topic over Tweets', 'width':400, 'height':400};
 				var chart = new google.visualization.PieChart(document.getElementById('tweet-analysis'));
@@ -67,9 +59,9 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 			function drawRepliesChart() {
 				var data = google.visualization.arrayToDataTable([
 					['Sentiment', 'Percentage'],
-					['Positive', repliesReport.pos],
-					['Negative', repliesReport.neg],
-					['Neutral', repliesReport.neut]
+					['Positive', queryAnalysisReport.replies.pos],
+					['Negative', queryAnalysisReport.replies.neg],
+					['Neutral', queryAnalysisReport.replies.neut]
 				]);
 				var options = {'title':'Sentiment Analysis on overall replies to the topic', 'width':400, 'height':400};
 				var chart = new google.visualization.PieChart(document.getElementById('replies-analysis'));
