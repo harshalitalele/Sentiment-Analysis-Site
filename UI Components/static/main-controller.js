@@ -2,6 +2,7 @@ var app = angular.module('search');
 
 app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.message = "Hello there!";
+	$scope.tweetsCount = 0;
 	var tweetReport = {},
 		repliesReport = {};
     
@@ -20,7 +21,8 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 	
 	$scope.searchQuery = function() {
 		$http.get('/query?q='+$scope.queryterm).then(function(res) {
-			$scope.tweets = res.data;
+			$scope.tweets = res.data.tweets;
+			$scope.tweetsCount = res.data.count;
 		}, function(err) {
 			$scope.message = "this is error";
 		});
@@ -68,5 +70,4 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 				chart.draw(data, options);
 			}
 		});
-	
 }]);

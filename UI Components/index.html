@@ -10,10 +10,10 @@
     <h1> Sentiment analysis on Twitter data </h1>
     <div class="col-md-12">
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<div ng-include="'static/sidebar.html'"></div>
 			</div>
-			<div class="col-md-8" style="height: 90vh; overflow: auto;">
+			<div class="col-md-9" style="height: 90vh; overflow: auto;">
 				<form>
 					<div class="form-group">
 						<input type="text" class="form-control" placeholder="Enter Search query here" ng-model="queryterm">
@@ -23,6 +23,7 @@
 				</form>
 				<div>
 					{% raw %}
+					{{tweetsCount}} results fetched
 					<div class="media" ng-repeat="tweet in tweets">
 						<img ng-src="{{tweet['user.profile_image_url']}}" class="align-self-start mr-3" alt="..." height="50" width="50"/>
 						<div class="media-body">
