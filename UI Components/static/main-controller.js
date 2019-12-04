@@ -6,6 +6,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 	var tweetReport = {},
 		repliesReport = {};
 	$scope.poiOptions = [	
+			{ twhandle: "*", label: "All" },
 			{ twhandle: "AmitShah", label: "Amit Shah" },
 			{ twhandle: "smritiirani", label: "Smriti Irani" },
 			{ twhandle: "narendramodi", label: "Narendra Modi" },
@@ -22,7 +23,9 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 			{ twhandle: "BarackObama", label: "Barack Obama" },
 			{ twhandle: "realdonaldtrump", label: "Donald J. trump" }
 		];
+	$scope.includeReplies = false;
 	$scope.hashtagOptions = [
+	  "All",
 	  "presidentkovind",
 	  "ciro12",
 	  "morningnutrition",
@@ -134,23 +137,28 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 	};
 	
 	$scope.searchQuery = function() {
-		$http.get('/query?q='+$scope.queryterm).then(function(res) {
-			var fdate = document.getElementById('from-date').value,
-				tdate = document.getElementById('to-date').value;
-			var radios = document.getElementsByName('twlang');
-			var lang = 'en';
-			for(var radEl in radios) {
-				if(radios[radEl].checked) {
-					lang = radios[radEl].value;
-					break;
-				}
+		var fdate = document.getElementById('from-date').value,
+			tdate = document.getElementById('to-date').value;
+		var radios = document.getElementsByName('twlang');
+		var lang = 'en';
+		for(var radEl in radios) {
+			if(radios[radEl].checked) {
+				lang = radios[radEl].value;
+				break;
 			}
-			var obj = {
-				poi_name: $scope.poi_name ? $scope.poi_name : 'All',
-				tweet_date: '[' + fdate + ' TO ' + tdate + ']',
-				hashtags: $scope.hashtag,
-				lang: lang
-			};
+		}
+		fdate = fdate ? fdate+'T00:00:00Z' : '*';
+		tdate = tdate ? tdate+'T00:00:00Z' : '*';
+		var obj = {
+			poi_name: $scope.poi_name,
+			tweet_date: '[' + fdate + ' TO ' + tdate + ']',
+			hashtags: $scope.hashtag == 'All' ? '*' : $scope.hashtag,
+			lang: lang,
+			includeReplies: $scope.includeReplies
+		};
+		$http.post('/query?q=' + $scope.queryterm, {
+			data: obj
+		}).then(function(res) {
 			$scope.tweets = res.data.tweets;
 			$scope.tweetsCount = res.data.count;
 		}, function(err) {

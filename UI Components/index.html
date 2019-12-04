@@ -11,12 +11,18 @@
     <div class="col-md-12">
 		<div class="row">
 			<div class="col-md-3">
-				<div ng-include="'static/sidebar.html'"></div>
+				<span ng-include="'static/sidebar.html'"></span>
 			</div>
 			<div class="col-md-9">
 				<form>
 					<div class="form-group">
 						<input type="text" class="form-control" placeholder="Enter Search query here" ng-model="queryterm">
+					</div>
+					<div>
+						<label>
+							<input type="checkbox" ng-model="includeReplies"/>  
+							Include replies
+						</label>
 					</div>
 				  	<button type="submit" class="btn btn-primary" ng-click="searchQuery()">Search Twitter</button>
 					<button type="submit" class="btn btn-primary" ng-click="analyzeTweets()">Analyze Query</button>
@@ -30,7 +36,7 @@
 						<div class="media-body">
 							<a style="text-decoration: none;" ng-href="{{tweet['user.entities.url.urls.expanded_url']}}" target="_blank">
 								<h5 class="mt-0">
-									{{tweet.poi_name[0]}}
+									{{tweet['user.name'][0]}}
 									<img src="static/external-512.png" width="17">
 								</h5>
 							</a>
