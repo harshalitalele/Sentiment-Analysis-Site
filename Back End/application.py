@@ -11,21 +11,30 @@ application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 solr_ip = 'http://18.223.117.41:8983/solr/IRProject4/'
-tweets_url = solr_ip + 'select?q={}&rows=10{}&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
+tweets_url = solr_ip + 'select?q={}&rows=10{}&fl=id,tweet_text,user.name,user.profile_image_url,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
 replies_url = solr_ip + 'select?q={}&rows=100&fl=id,tweet_text'
 
 @application.route("/")
 def home():
     return render_template("index.html")
 
-@application.route('/query', methods = ['GET'])
+@application.route('/query', methods = ['POST'])
 def query():
     query = 'tweet_text:' + request.args.get('q')
     query = urllib.parse.quote(query)
-    resp = {'data': [], 'count': 0}
-    facetq = '&fq=-in_reply_to_status_id:' + urllib.parse.quote('[* TO *]')
+    filters = request.get_json().get('data')
+    resp = {'tweets': [], 'count': 0}
+    facetq = ''
+    print(filters)
+    for f in filters:
+        if f == 'includeReplies':
+            if filters[f] == False:
+                facetq += '&fq=-in_reply_to_status_id:' + urllib.parse.quote('[* TO *]')
+        elif filters[f] != '' and filters[f] != None:
+            facetq += '&fq=' + f + ':' + urllib.parse.quote(filters[f])
     print(facetq)
     url = tweets_url.format(query, facetq)
+    print(url)
     try:
         datatest = json.load(urllib.request.urlopen(url))
         resp['tweets'] = datatest['response']['docs']
