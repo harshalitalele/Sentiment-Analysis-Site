@@ -25,14 +25,15 @@
 					{% raw %}
 					{{tweetsCount}} results fetched
 					<div class="media" ng-repeat="tweet in tweets">
-						<img ng-src="{{tweet['user.profile_image_url']}}" class="align-self-start mr-3" alt="..." height="50" width="50"/>
+						<img ng-src="{{tweet['user.profile_image_url']}}" class="mr-3" alt="no img" height="50" width="50" 
+							 onerror=this.src="static/no_image_available.png">
 						<div class="media-body">
 							<a style="text-decoration: none;" ng-href="{{tweet['user.entities.url.urls.expanded_url']}}" target="_blank">
 								<h5 class="mt-0">
 									{{tweet.poi_name[0]}}
 								</h5>
 							</a>
-							<a ng-href="{{tweet.tweet_urls}}" target="_blank">
+							<a class="tweet-text" ng-href="{{tweet.tweet_urls}}" target="_blank">
 								{{tweet.tweet_text[0]}}
 							</a>							
 						</div>
