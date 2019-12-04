@@ -11,7 +11,7 @@ application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 solr_ip = 'http://18.223.117.41:8983/solr/IRProject4/'
-tweets_url = solr_ip + 'select?q={}&rows=10&fq=-in_reply_to_status_id:{}&fq=poi_name:narendramodi&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
+tweets_url = solr_ip + 'select?q={}&rows=10{}&fl=id,tweet_text,poi_name,created_at,user.profile_image_url,lang,poi_name,country,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
 replies_url = solr_ip + 'select?q={}&rows=100&fl=id,tweet_text'
 
 @application.route("/")
@@ -20,21 +20,20 @@ def home():
 
 @application.route('/query', methods = ['GET'])
 def query():
-    print(request.args.get('q'))
     query = 'tweet_text:' + request.args.get('q')
     query = urllib.parse.quote(query)
-    print(query)
-    facetq = urllib.parse.quote('[* TO *]')
+    resp = {'data': [], 'count': 0}
+    facetq = '&fq=-in_reply_to_status_id:' + urllib.parse.quote('[* TO *]')
+    print(facetq)
     url = tweets_url.format(query, facetq)
-    print(url)
     try:
-        datatest = urllib.request.urlopen(url)
-        docstest = json.load(datatest)['response']['docs']
+        datatest = json.load(urllib.request.urlopen(url))
+        resp['tweets'] = datatest['response']['docs']
+        resp['count'] = datatest['response']['numFound']
     except:
         print("An exception occurred for Query: " + query)
-        docstest = '[]'
-    docstest = json.dumps(docstest)
-    return docstest
+    resp = json.dumps(resp)
+    return resp
 
 def getTweetIds(query):
     idurl = 'http://18.223.117.41:8983/solr/IRProject4/select?q={}&rows=100&fl=id,tweet_text&fq=-in_reply_to_status_id:{}'
