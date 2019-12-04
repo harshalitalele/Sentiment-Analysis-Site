@@ -13,7 +13,7 @@
 			<div class="col-md-3">
 				<div ng-include="'static/sidebar.html'"></div>
 			</div>
-			<div class="col-md-9" style="height: 90vh; overflow: auto;">
+			<div class="col-md-9">
 				<form>
 					<div class="form-group">
 						<input type="text" class="form-control" placeholder="Enter Search query here" ng-model="queryterm">
@@ -24,18 +24,23 @@
 				<div>
 					{% raw %}
 					{{tweetsCount}} results fetched
-					<div class="media" ng-repeat="tweet in tweets">
+					<div class="media tweet" ng-repeat="tweet in tweets">
 						<img ng-src="{{tweet['user.profile_image_url']}}" class="mr-3" alt="no img" height="50" width="50" 
 							 onerror=this.src="static/no_image_available.png">
 						<div class="media-body">
 							<a style="text-decoration: none;" ng-href="{{tweet['user.entities.url.urls.expanded_url']}}" target="_blank">
 								<h5 class="mt-0">
 									{{tweet.poi_name[0]}}
+									<img src="static/external-512.png" width="17">
 								</h5>
 							</a>
 							<a class="tweet-text" ng-href="{{tweet.tweet_urls}}" target="_blank">
 								{{tweet.tweet_text[0]}}
-							</a>							
+								<span class="glyphicon glyphicon-new-window"></span>
+							</a>
+							<div style="margin-top: 10px;">
+								Posted on: {{tweet.tweet_date[0].split('T')[0]}}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -66,6 +71,7 @@
 	{% endraw %}
 	<div>
 		<script src="static/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="static/angular.min.js"></script>
         <script src="static/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

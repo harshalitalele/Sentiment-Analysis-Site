@@ -5,3 +5,16 @@
 	text-decoration: none !important;
 	color: black;
 }
+.tweet {
+	padding: 15px;
+    background-color: beige;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+img {
+	vertical-align: baseline;
+}
+.sidebar {
+	background-color: beige;
+	padding-top: 10px;
+}
