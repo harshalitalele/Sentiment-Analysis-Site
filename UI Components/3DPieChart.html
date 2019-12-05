@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Topics', 'Trending'],
+          ['World Economy',11000],
+          ['Helthcare',2000],
+          ['Indian Politics',24567],
+          ['Elections',60888],
+          ['Power/World Leaders',7000],
+		  ['Climate Change',10500],
+		  ['Others',2000],
+		  ['Natural Calamities',12500],
+		  ['Women Empowerment',40000],
+		  ['War/Battle/Terrorism',19080]
+        ]);
+
+        var options = {
+          title: 'Topic Categorization',
+          is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
