@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Hashtags', 'Number'],
+          ['presidentkovind',584],
+          ['morningnutrition',336],
+          ['mannkibaat',254],
+		  ['हिंदी_दिवस',207],
+		  ['doyourjob',150],
+		  ['stophindiimposition',119],
+		  ['obamacare',80],
+		  ['yogaday2019',79],
+		  ['chandrayaan2',78],
+		  ['apollo50th',74]
+        ]);
+
+        var options = {
+          title: 'TOP 10 Hashtags',
+          pieHole: 0.4,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="donutchart" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>

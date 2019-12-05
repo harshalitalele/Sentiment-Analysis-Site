@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>  
+<script>
+window.onload = function () {
+	
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	
+	title:{
+		text:"Number of Tweets per POI"
+	},
+	axisX:{
+		interval: 1
+	},
+	axisY2:{
+		interlacedColor: "rgba(1,77,101,.2)",
+		gridColor: "rgba(1,77,101,.1)",
+		title: "Number of Tweets"
+	},
+	data: [{
+		type: "bar",
+		name: "companies",
+		axisYType: "primary",
+		color: "#014D65",
+		dataPoints: [	
+			{ y: 3438, label: "Amit Shah" },
+			{ y: 3436, label: "Smriti Irani" },
+			{ y: 3256, label: "Narendra Modi" },
+			{ y: 3248, label: "Rajnath Singh" },
+			{ y: 3238, label: "Yogi Adityanath" },
+			{ y: 3439, label: "Dilma Rousseff" },
+			{ y: 3420, label: "Jair M. Bolsonaro" },
+			{ y: 3233, label: "José Serra" },
+			{ y: 3197, label: "Marina Silva" },
+			{ y: 2628, label: "Ciro Gomes" },
+			{ y: 3921, label: "Bernie Sanders" },
+			{ y: 3232, label: "Hillary Clinton" },
+			{ y: 3226, label: "Mike pence" },
+			{ y: 3222, label: "Barack Obama" },
+			{ y: 3215, label: "Donald trump" }
+		]
+	}]
+});
+chart.render();
+
+}
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+</html>
