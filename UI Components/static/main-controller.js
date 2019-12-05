@@ -2,6 +2,7 @@ var app = angular.module('search');
 
 app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.message = "Hello there!";
+	$scope.allNews = [];
 	$scope.tweetsCount = 0;
 	var tweetReport = {},
 		repliesReport = {};
@@ -156,7 +157,7 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 			lang: lang,
 			includeReplies: $scope.includeReplies
 		};
-		$http.post('/query?q=' + $scope.queryterm, {
+		$http.post('http://192.168.1.55:5000/query?q=' + $scope.queryterm, {
 			data: obj
 		}).then(function(res) {
 			$scope.tweets = res.data.tweets;
@@ -167,11 +168,20 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 	};
 	
 	$scope.analyzeTweets = function() {
-		$scope.openModal();
-		$http.post('/queryanalysis', {
+		$http.post('http://192.168.1.55:5000/queryanalysis', {
 			query: $scope.queryterm
 		}).then(function(res) {
-			queryAnalysisReport = res.data;			
+			queryAnalysisReport = res.data;
+			$scope.openModal();
+		}, function(err) {
+			$scope.message = "this is error";
+		});
+	};
+	
+	$scope.fetchNews = function() {
+		$http.get('http://192.168.1.55:5000/fetchnews?q='+$scope.queryterm).then(function(res) {
+			$scope.allNews = res.data.response.docs;
+			$('#newsModalLong').modal('show');
 		}, function(err) {
 			$scope.message = "this is error";
 		});
@@ -205,6 +215,19 @@ app.controller('mainCtrl', ['$scope', '$http', function($scope, $http) {
 				]);
 				var options = {'title':'Sentiment Analysis on overall replies to the topic', 'width':400, 'height':400};
 				var chart = new google.visualization.PieChart(document.getElementById('replies-analysis'));
+				chart.draw(data, options);
+			}
+			google.charts.setOnLoadCallback(drawCountryChart);
+			var countryData = [['CountrywiseTweets', 'Percentage']],
+				countryArr = queryAnalysisReport.metadata.country,
+				counterArr = [0,2,4];
+			for(var i in counterArr) {
+				countryData.push([countryArr[counterArr[i]], countryArr[counterArr[i]+1]]);
+			}
+			function drawCountryChart() {
+				var data = google.visualization.arrayToDataTable(countryData);
+				var options = {'title':'Countrywise tweets on Searched topic', 'width':400, 'height':400};
+				var chart = new google.visualization.PieChart(document.getElementById('countrywise-analysis'));
 				chart.draw(data, options);
 			}
 		});

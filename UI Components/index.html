@@ -26,6 +26,7 @@
 					</div>
 				  	<button type="submit" class="btn btn-primary" ng-click="searchQuery()">Search Twitter</button>
 					<button type="submit" class="btn btn-primary" ng-click="analyzeTweets()">Analyze Query</button>
+					<button type="submit" class="btn btn-primary" ng-click="fetchNews()">Fetch Relevant News</button>
 				</form>
 				<div>
 					{% raw %}
@@ -63,9 +64,50 @@
 				  <span aria-hidden="true">&times;</span>
 				</button>
 			  </div>
+			  <div class="modal-body class">
+				  <div id="tweet-analysis" class="col-md-6"></div>
+				  <div id="replies-analysis" class="col-md-6"></div>
+				  <div id="countrywise-analysis" class="col-md-6"></div>
+				  <div id="hashtags-bars" style="height: 300px; width: 100%;"></div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<div class="modal fade" id="newsModalLong" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Top 10 News relevant to '{{queryterm}}'</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
 			  <div class="modal-body">
-				  <div id="tweet-analysis" class="row"></div>
-				  <div id="replies-analysis" class="row"></div>
+				  <div class="media tweet" ng-repeat="news in allNews">
+						<img ng-src="{{news.multimedia[0].url}}" class="mr-3" alt="no img" height="100" width="100" 
+							 onerror=this.src="static/no_image_available.png">
+						<div class="media-body">
+							<a style="text-decoration: none;" ng-href="{{news.web_url}}" target="_blank">
+								<h5 class="mt-0">
+									{{news.headline.main}}
+									<img src="static/external-512.png" width="17">
+								</h5>
+							</a>
+							<a class="tweet-text" ng-href="{{news.web_url}}" target="_blank">
+								{{tweet.snippet}}
+								<span class="glyphicon glyphicon-new-window"></span>
+							</a>
+							<div style="margin-top: 10px;">
+								Published at: {{news.pub_date}}
+							</div>
+							<div style="margin-top: 10px;">
+								Source: {{news.source}}
+							</div>
+					  </div>
+				  </div>				  
 			  </div>
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -78,6 +120,7 @@
 	<div>
 		<script src="static/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
         <script src="static/angular.min.js"></script>
         <script src="static/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
