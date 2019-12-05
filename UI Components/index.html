@@ -7,7 +7,11 @@
 	<link rel="stylesheet" href="static/style.css">
   </head>
   <body ng-app='search' ng-controller='mainCtrl'>
-    <h1> Sentiment analysis on Twitter data </h1>
+    <h1> 
+		Sentiment analysis on Twitter data 
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tweetModal">Corpus Statistics</button>
+	</h1>
+	<div ng-include="'static/twitter-stat.html'" style="width: 10px;height: 10px;"></div>
     <div class="col-md-12">
 		<div class="row">
 			<div class="col-md-3">

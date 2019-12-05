@@ -1,0 +1,213 @@
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+        google.charts.load("current", {
+            packages: ["corechart"]
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Topics', 'Trending'],
+                ['World Economy', 11000],
+                ['Helthcare', 2000],
+                ['Indian Politics', 24567],
+                ['Elections', 60888],
+                ['Power/World Leaders', 7000],
+                ['Climate Change', 10500],
+                ['Others', 2000],
+                ['Natural Calamities', 12500],
+                ['Women Empowerment', 40000],
+                ['War/Battle/Terrorism', 19080]
+            ]);
+            var options = {
+                is3D: true,
+				height: 350,
+				width: 600
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart.draw(data, options);
+        }
+    </script>
+    <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['geochart'],
+            // Note: you will need to get a mapsApiKey for your project.
+            // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+            'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+        });
+        google.charts.setOnLoadCallback(drawRegionsMap);
+
+        function drawRegionsMap() {
+            var data = google.visualization.arrayToDataTable([
+                ['Country', 'NumberofTweets'],
+                ['India', 68747],
+                ['United States', 41281],
+                ['Brazil', 35461]
+            ]);
+            var options = {
+				height: 350,
+				width: 600
+			};
+            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+            chart.draw(data, options);
+        }
+    </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {
+            packages: ["corechart"]
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Hashtags', 'Number'],
+                ['presidentkovind', 584],
+                ['morningnutrition', 336],
+                ['mannkibaat', 254],
+                ['हिंदी_दिवस', 207],
+                ['doyourjob', 150],
+                ['stophindiimposition', 119],
+                ['obamacare', 80],
+                ['yogaday2019', 79],
+                ['chandrayaan2', 78],
+                ['apollo50th', 74]
+            ]);
+            var options = {
+                pieHole: 0.4,
+				height: 350,
+				width: 600
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(data, options);
+        }
+    </script>
+    <script>
+        var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                axisX: {
+                    interval: 1
+                },
+                axisY2: {
+                    interlacedColor: "rgba(177,10,10,.2)",
+                    gridColor: "rgba(1,77,101,.1)",
+                    title: "Number of Tweets"
+                },
+                data: [{
+                    type: "bar",
+                    name: "companies",
+                    axisYType: "primary",
+                    color: "#014D65",
+                    dataPoints: [{
+                        y: 3138,
+                        label: "Amit Shah"
+                    }, {
+                        y: 2436,
+                        label: "Smriti Irani"
+                    }, {
+                        y: 4756,
+                        label: "Narendra Modi"
+                    }, {
+                        y: 3048,
+                        label: "Rajnath Singh"
+                    }, {
+                        y: 3438,
+                        label: "Yogi Adityanath"
+                    }, {
+                        y: 3439,
+                        label: "Dilma Rousseff"
+                    }, {
+                        y: 3020,
+                        label: "Jair M. Bolsonaro"
+                    }, {
+                        y: 3433,
+                        label: "José Serra"
+                    }, {
+                        y: 3197,
+                        label: "Marina Silva"
+                    }, {
+                        y: 2828,
+                        label: "Ciro Gomes"
+                    }, {
+                        y: 3521,
+                        label: "Bernie Sanders"
+                    }, {
+                        y: 2232,
+                        label: "Hillary Clinton"
+                    }, {
+                        y: 3226,
+                        label: "Mike pence"
+                    }, {
+                        y: 3022,
+                        label: "Barack Obama"
+                    }, {
+                        y: 3215,
+                        label: "Donald trump"
+                    }]
+                }]
+            });
+            chart.render();
+    </script>
+</head>
+
+<body>
+    <div>
+        <div class="modal fade" id="tweetModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Overall Corpus Statistics</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="tweet-analysis" class="row"></div>
+						<div style="text-align: center;font-size: 30px;">Topics Categorization</div>
+                        <div id="piechart_3d" style="margin: auto; width: 600px; height: 350px;"></div>
+						<div style="text-align: center;font-size: 30px;">Regional Distribution</div>
+                        <div id="regions_div" style="margin: auto;width: 600px; height: 350px;"></div>
+						<div style="text-align: center;font-size: 30px;">Lingual Distribution</div>
+                        <div id="piechart" style="margin: auto;width: 600px; height: 300px;"></div>
+						<div style="text-align: center;font-size: 30px;">No of Tweets per POI</div>
+						<div id="chartContainer" style="height: auto;min-height: 500px;width: 600px;margin: auto;"></div>
+						<div style="text-align: center;font-size: 30px;">Top 10 hashtags</div>
+                        <div id="donutchart" style="margin: auto;width: 600px; height: 350px;"></div>
+                        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+                        <script type="text/javascript">
+                            // Load google charts
+                            google.charts.load('current', {
+                                'packages': ['corechart']
+                            });
+                            google.charts.setOnLoadCallback(drawChart);
+                             // Draw the chart and set the chart values
+                            function drawChart() {
+                                var data = google.visualization.arrayToDataTable([
+                                    ['Language', 'Number of Tweets'],
+                                    ['English', 93439],
+                                    ['Hindi', 28852],
+                                    ['Portuguese', 42333]
+                                ]);
+                                // Optional; add a title and set the width and height of the chart
+                                var options = {
+                                    'title': 'Tweets in Different Language',
+                                    'width': 450,
+                                    'height': 300
+                                };
+                                // Display the chart inside the <div> element with id="piechart"
+                                var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                                chart.draw(data, options);
+                            }
+                        </script>
+                        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
