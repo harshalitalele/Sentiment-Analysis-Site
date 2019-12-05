@@ -10,7 +10,7 @@ from translate import Translator
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
-solr_ip = 'http://18.223.117.41:8983/solr/IRProject4/'
+solr_ip = 'http://18.219.110.31:8983/solr/IRProject4/'
 tweets_url = solr_ip + 'select?q={}&rows=10{}&fl=id,tweet_text,user.name,user.profile_image_url,tweet_urls,tweet_date,user.entities.url.urls.expanded_url'
 replies_url = solr_ip + 'select?q={}&rows=100&fl=id,tweet_text'
 
@@ -45,7 +45,7 @@ def query():
     return resp
 
 def getTweetIds(query):
-    idurl = 'http://18.223.117.41:8983/solr/IRProject4/select?q={}&rows=100&fl=id,tweet_text&fq=-in_reply_to_status_id:{}'
+    idurl = 'http://18.219.110.31:8983/solr/IRProject4/select?q={}&rows=100&fl=id,tweet_text&fq=-in_reply_to_status_id:{}'
     query = 'tweet_text:' + urllib.parse.quote(query)
     facetq = urllib.parse.quote('[* TO *]')
     url = idurl.format(query, facetq)
@@ -75,8 +75,10 @@ def getSentimentReport(data):
 @application.route('/queryanalysis', methods = ['POST'])
 def analyzeQueryReq():
     q = request.get_json().get('query')
-    overall_report = {'tweet': {}, 'replies': {}}
+    overall_report = {'tweet': {}, 'replies': {}, 'metadata': {}}
     tweets = getTweetIds(q)
+    metadata = fetchQueryMetadata(q)
+    overall_report['metadata'] = metadata
     tw_report = getSentimentReport(tweets)
     overall_report['tweet'] = tw_report
     query = ''
@@ -97,10 +99,50 @@ def analyzeQueryReq():
     except:
         print("An exception occurred for the Query")
         docstest = '[]'
+
     re_report = getSentimentReport(docstest)
     overall_report['replies'] = re_report
     report = json.dumps(overall_report)
     return report
+
+def fetchQueryMetadata(query):
+    faceturl = 'http://18.219.110.31:8983/solr/IRProject4/select?facet.field=country&facet.field=hashtags&facet.field=tweet_date&facet.field=lang&facet.field=retweeted&facet.field=poi_name&facet=on&q={}&rows=1&fl=id'
+    query = 'tweet_text:' + urllib.parse.quote(query)
+    url = faceturl.format(query)
+    try:
+        datatest = urllib.request.urlopen(url)
+        docstest = json.load(datatest)['facet_counts']['facet_fields']
+    except:
+        print("An exception occurred for Query: " + query)
+        docstest = '[]'
+    return docstest
+
+@application.route('/fetchnews', methods = ['GET'])
+def fetchNews():
+    q = request.args.get('q')
+
+    metadata = fetchQueryMetadata(q)
+    
+    person = metadata['poi_name'][0]
+    lang = metadata['lang'][0]
+    country = metadata['country'][0]
+    hashtags = metadata['hashtags'][0]
+    rel_date = ''.join(metadata['tweet_date'][0].split('T')[0].split('-'))
+
+    url = ('https://api.nytimes.com/svc/search/v2/articlesearch.json?' +
+       'q=' + urllib.parse.quote(q) + '&' +
+       #'fq=body:' + urllib.parse.quote('("Twitter ' + person + ' ' + hashtags + '")') + '&'
+       'begin_date:' + rel_date + '&' +
+       'api-key=yITQBXVGR5TlEbggbWcqG2WYhH6s4uUz')
+    
+    try:
+        news = urllib.request.urlopen(url)
+        news = json.load(news)
+    except:
+        print("An exception occurred for the Query")
+        docstest = '[]'
+    news = json.dumps(news)
+    return news
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
